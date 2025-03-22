@@ -1,24 +1,31 @@
 FROM python:3.10-slim
 
-# Install dependencies
+# Install system dependencies for COLMAP and general usage
 RUN apt-get update && apt-get install -y \
     git \
-    build-essential \
     cmake \
+    build-essential \
     libboost-all-dev \
-    libglew-dev \
     libeigen3-dev \
+    libsuitesparse-dev \
+    libfreeimage-dev \
     libgoogle-glog-dev \
     libgflags-dev \
-    libfreeimage-dev \
-    libmetis-dev \
-    libopencv-dev \
+    libglew-dev \
+    qtbase5-dev \
+    libqt5opengl5-dev \
+    libcgal-dev \
+    libatlas-base-dev \
     wget \
-    unzip \
-    && apt-get clean
+    ffmpeg \
+    python3-opencv \
+    && apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+RUN pip install --no-cache-dir opencv-python tqdm
 
 # Clone COLMAP (CPU-only)
-# Replace with the correct URL
 RUN git clone https://github.com/colmap/colmap.git /colmap
 
 # Build COLMAP
@@ -27,10 +34,11 @@ RUN mkdir build && cd build && \
     cmake .. -DCUDA_ENABLED=OFF && \
     make -j$(nproc) && make install
 
-# Copy your scripts
+# Create working directory
 WORKDIR /app
-COPY extract_frames.py .
-COPY run_colmap.py .
 
-# Set default command (run both scripts)
-CMD ["bash", "-c", "python extract_frames.py && python run_colmap.py"]
+# Copy your Python scripts into container
+COPY extract_frames.py run_colmap.py ./
+
+# Set default command to run both scripts
+CMD ["sh", "-c", "python extract_frames.py && python run_colmap.py"]

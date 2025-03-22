@@ -27,3 +27,10 @@ output/
 .env
 *.log
 *.tmp
+.git
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.swp
+.DS_Store
