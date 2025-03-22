@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y \
     cmake \
     build-essential \
     libboost-all-dev \
-    libeigen3-dev \
+    libceres-dev \
     libsuitesparse-dev \
     libfreeimage-dev \
     libgoogle-glog-dev \
@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y \
     libcgal-dev \
     libatlas-base-dev \
     libflann-dev \
+    libeigen3-dev \
     libsqlite3-dev \
     libpng-dev \
     libjpeg-dev \
