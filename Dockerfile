@@ -17,7 +17,12 @@ RUN apt-get update && apt-get install -y \
     libcgal-dev \
     libatlas-base-dev \
     libflann-dev \
-    libsqlite3-dev \  
+    libsqlite3-dev \
+    libpng-dev \
+    libjpeg-dev \
+    libx11-dev \
+    mesa-common-dev \
+    libglu1-mesa-dev \  
     wget \
     ffmpeg \
     python3-opencv \
