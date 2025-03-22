@@ -1,0 +1,29 @@
+# Ignore Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore Git files
+.git
+.gitignore
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore Colab/Notebook files if any
+*.ipynb
+.ipynb_checkpoints/
+
+# Ignore video/image/output folders if mounted at runtime
+video/
+images/
+sparse/
+dense/
+output/
+
+# Ignore environment and temporary files
+.env
+*.log
+*.tmp
