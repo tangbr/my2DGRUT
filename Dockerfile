@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y \
     libqt5opengl5-dev \
     libcgal-dev \
     libatlas-base-dev \
+    libflann-dev \  
     wget \
     ffmpeg \
     python3-opencv \
