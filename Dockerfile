@@ -18,7 +18,8 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean
 
 # Clone COLMAP (CPU-only)
-RUN git clone https://github.com/facebookresearch/colmap.git /colmap
+# Replace with the correct URL
+RUN git clone https://github.com/colmap/colmap.git /colmap
 
 # Build COLMAP
 WORKDIR /colmap
