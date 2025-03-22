@@ -51,4 +51,4 @@ WORKDIR /app
 COPY extract_frames.py run_colmap.py ./
 
 # Set default command to run both scripts
-CMD ["sh", "-c", "python extract_frames.py && python run_colmap.py"]
+CMD ["bash", "-c", "python extract_frames.py && python run_colmap.py"]
