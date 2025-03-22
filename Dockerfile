@@ -38,8 +38,11 @@ RUN git clone https://github.com/colmap/colmap.git /colmap
 # Build COLMAP
 WORKDIR /colmap
 RUN mkdir build && cd build && \
-    cmake .. -DCUDA_ENABLED=OFF && \
-    make -j$(nproc) && make install
+    cmake .. -DCUDA_ENABLED=OFF || (cat CMakeFiles/CMakeOutput.log && false)
+    
+# If cmake succeeds, build and install
+WORKDIR /colmap/build
+RUN make -j$(nproc) && make install    
 
 # Create working directory
 WORKDIR /app
