@@ -42,7 +42,8 @@ RUN git clone https://github.com/colmap/colmap.git /colmap
 WORKDIR /colmap
 RUN mkdir build
 WORKDIR /colmap/build
-RUN cmake .. -DCUDA_ENABLED=OFF -DCMAKE_VERBOSE_MAKEFILE=ON
+RUN cmake .. -DCUDA_ENABLED=OFF -DCMAKE_VERBOSE_MAKEFILE=ON || \
+    (echo "==== CMakeError.log ====" && cat CMakeFiles/CMakeError.log && echo "==== CMakeOutput.log ====" && cat CMakeFiles/CMakeOutput.log && false)
 
 #|| (echo "==== CMakeOutput.log ====" && cat CMakeFiles/CMakeOutput.log || echo "No log found" && false)
     
