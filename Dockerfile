@@ -38,7 +38,7 @@ RUN git clone https://github.com/colmap/colmap.git /colmap
 # Build COLMAP
 WORKDIR /colmap
 RUN mkdir build && cd build && \
-    cmake .. -DCUDA_ENABLED=OFF || (cat CMakeFiles/CMakeOutput.log && false)
+cmake .. -DCUDA_ENABLED=OFF || (echo "==== CMakeOutput.log ====" && cat CMakeFiles/CMakeOutput.log || echo "No log found" && false)
     
 # If cmake succeeds, build and install
 WORKDIR /colmap/build
