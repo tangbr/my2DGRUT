@@ -23,6 +23,7 @@ RUN apt-get update && apt-get install -y \
     mesa-common-dev \
     libglu1-mesa-dev\
     libxrandr-dev \
+    qt5-default \
     wget \
     ffmpeg \
     python3-opencv && \
