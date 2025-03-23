@@ -29,8 +29,15 @@ output/
 *.tmp
 .git
 __pycache__/
+*.ply
+*.db
+build/
+.colmap/
 *.mp4
 *.jpg
+*.png
+*.npz
+*.npy
 *.pyc
 *.pyo
 *.pyd

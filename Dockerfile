@@ -26,6 +26,7 @@ RUN apt-get update && apt-get install -y \
     qtbase5-dev \
     qtdeclarative5-dev \
     qttools5-dev \
+    qt5-default \
     wget \
     ffmpeg \
     python3-opencv && \
@@ -40,7 +41,8 @@ RUN git clone https://github.com/colmap/colmap.git /colmap
 
 # Build COLMAP
 WORKDIR /colmap/build
-RUN cmake .. -DCUDA_ENABLED=OFF -DCMAKE_VERBOSE_MAKEFILE=ON && \
+RUN rm -rf * && \
+    cmake .. -DCUDA_ENABLED=OFF -DCMAKE_VERBOSE_MAKEFILE=ON || (echo "=== CMakeError.log ===" && cat CMakeFiles/CMakeError.log || echo "CMakeError.log missing") && \
     make -j$(nproc) && make install
 
 # Create working directory and copy scripts
