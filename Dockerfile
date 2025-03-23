@@ -26,7 +26,7 @@ RUN apt-get update && apt-get install -y \
     qtbase5-dev \
     qtdeclarative5-dev \
     qttools5-dev \
-    qt5-default \
+    qtbase5-dev-tools \
     wget \
     ffmpeg \
     python3-opencv && \
