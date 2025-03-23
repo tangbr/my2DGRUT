@@ -41,8 +41,7 @@ RUN pip install --no-cache-dir opencv-python tqdm
 RUN git clone https://github.com/colmap/colmap.git /colmap && \
     sed -i '/find_package(METIS REQUIRED)/d' /colmap/CMakeLists.txt && \
     sed -i '/target_link_libraries(colmap PRIVATE metis)/d' /colmap/src/colmap/math/CMakeLists.txt && \
-    sed -i '/metis/d' /colmap/src/colmap/math/CMakeLists.txt && \
-    sed -i 's/#include <metis.h>//g' /colmap/src/colmap/math/graph_cut.cc
+    sed -i '/metis/d' /colmap/src/colmap/math/CMakeLists.txt
 
 # Set working directory for build setup
 
