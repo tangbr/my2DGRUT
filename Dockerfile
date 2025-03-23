@@ -38,14 +38,16 @@ RUN pip install --no-cache-dir opencv-python tqdm
 
 # Clone COLMAP and disable METIS usage
 RUN git clone https://github.com/colmap/colmap.git /colmap && \
-    sed -i '/find_package(METIS REQUIRED)/s/^/#/' /colmap/CMakeLists.txt && \
-    sed -i '/target_link_libraries.*metis/s/^/#/' /colmap/src/colmap/math/CMakeLists.txt
+    sed -i '/find_package(METIS REQUIRED)/d' /colmap/CMakeLists.txt && \
+    sed -i '/target_link_libraries(colmap PRIVATE metis)/d' /colmap/src/colmap/math/CMakeLists.txt && \
+    sed -i '/metis/d' /colmap/src/colmap/math/CMakeLists.txt
 
 # Set working directory for build setup
 
 WORKDIR /colmap
 WORKDIR /colmap/build
 RUN rm -rf * && \
+    rm -rf CMakeCache.txt CMakeFiles/ && \
     cmake .. \
         -DCUDA_ENABLED=OFF \
         -DCMAKE_VERBOSE_MAKEFILE=ON && \
