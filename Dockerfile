@@ -42,7 +42,10 @@ RUN git clone https://github.com/colmap/colmap.git /colmap
 # Build COLMAP
 WORKDIR /colmap/build
 RUN rm -rf * && \
-    cmake .. -DCUDA_ENABLED=OFF -DCMAKE_VERBOSE_MAKEFILE=ON && \
+    cmake .. \
+        -DCUDA_ENABLED=OFF \
+        -DWITH_METIS=OFF \
+        -DCMAKE_VERBOSE_MAKEFILE=ON && \
     make -j$(nproc) > /tmp/make_output.log 2>&1 || (cat /tmp/make_output.log && false) && \
     make install
 
