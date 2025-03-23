@@ -42,8 +42,9 @@ RUN git clone https://github.com/colmap/colmap.git /colmap
 # Build COLMAP
 WORKDIR /colmap/build
 RUN rm -rf * && \
-    cmake .. -DCUDA_ENABLED=OFF -DCMAKE_VERBOSE_MAKEFILE=ON || (echo "=== CMakeError.log ===" && cat CMakeFiles/CMakeError.log || echo "CMakeError.log missing") && \
-    make -j$(nproc) && make install
+    cmake .. -DCUDA_ENABLED=OFF -DCMAKE_VERBOSE_MAKEFILE=ON && \
+    make -j$(nproc) > /tmp/make_output.log 2>&1 || (cat /tmp/make_output.log && false) && \
+    make install
 
 # Create working directory and copy scripts
 WORKDIR /app
