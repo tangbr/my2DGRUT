@@ -42,8 +42,9 @@ RUN git clone https://github.com/colmap/colmap.git /colmap
 # Build COLMAP
 WORKDIR /colmap
 
-RUN sed -i 's/find_package(METIS REQUIRED)/# find_package(METIS REQUIRED)/' /colmap/CMakeLists.txt && \
-    sed -i 's/target_link_libraries(colmap PRIVATE metis)/# target_link_libraries(colmap PRIVATE metis)/' /colmap/src/colmap/math/CMakeLists.txt
+# Patch METIS-related lines from the source
+RUN sed -i '/find_package(METIS REQUIRED)/s/^/#/' /colmap/CMakeLists.txt && \
+    sed -i '/target_link_libraries(.*metis.*)/s/^/#/' /colmap/src/colmap/math/CMakeLists.txt
 
 # Build COLMAP
 WORKDIR /colmap/build
