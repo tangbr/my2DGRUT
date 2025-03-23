@@ -40,6 +40,12 @@ RUN pip install --no-cache-dir opencv-python tqdm
 RUN git clone https://github.com/colmap/colmap.git /colmap
 
 # Build COLMAP
+WORKDIR /colmap
+
+RUN sed -i 's/find_package(METIS REQUIRED)/# find_package(METIS REQUIRED)/' /colmap/CMakeLists.txt && \
+    sed -i 's/target_link_libraries(colmap PRIVATE metis)/# target_link_libraries(colmap PRIVATE metis)/' /colmap/src/colmap/math/CMakeLists.txt
+
+# Build COLMAP
 WORKDIR /colmap/build
 RUN rm -rf * && \
     cmake .. \
