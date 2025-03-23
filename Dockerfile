@@ -26,6 +26,8 @@ RUN apt-get update && apt-get install -y \
     qtbase5-dev \
     qtchooser \
     qt5-qmake \
+    qtdeclarative5-dev \
+    qttools5-dev \
     qtbase5-dev-tools \
     wget \
     ffmpeg \
