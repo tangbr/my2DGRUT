@@ -1,6 +1,6 @@
 FROM python:3.10-slim
 
-# Install system dependencies for COLMAP and general usage
+# Install system dependencies for COLMAP
 RUN apt-get update && apt-get install -y \
     git \
     cmake \
@@ -21,14 +21,11 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libx11-dev \
     mesa-common-dev \
-    libglu1-mesa-dev\
+    libglu1-mesa-dev \
     libxrandr-dev \
     qtbase5-dev \
-    qtchooser \
-    qt5-qmake \
     qtdeclarative5-dev \
     qttools5-dev \
-    qtbase5-dev-tools \
     wget \
     ffmpeg \
     python3-opencv && \
@@ -38,29 +35,17 @@ RUN apt-get update && apt-get install -y \
 # Install Python dependencies
 RUN pip install --no-cache-dir opencv-python tqdm
 
-# Copy your Python scripts into container
-COPY extract_frames.py run_colmap.py ./
-
-# Clone COLMAP (CPU-only)
+# Clone COLMAP
 RUN git clone https://github.com/colmap/colmap.git /colmap
 
 # Build COLMAP
-WORKDIR /colmap
-RUN mkdir build
 WORKDIR /colmap/build
-RUN cmake .. \
-    -DCUDA_ENABLED=OFF \
-    -DCMAKE_VERBOSE_MAKEFILE=ON
+RUN cmake .. -DCUDA_ENABLED=OFF -DCMAKE_VERBOSE_MAKEFILE=ON && \
+    make -j$(nproc) && make install
 
-
-#|| (echo "==== CMakeOutput.log ====" && cat CMakeFiles/CMakeOutput.log || echo "No log found" && false)
-    
-# If cmake succeeds, build and install
-
-RUN make -j$(nproc) && make install    
-
-# Create working directory
+# Create working directory and copy scripts
 WORKDIR /app
+COPY extract_frames.py run_colmap.py ./
 
-# Set default command to run both scripts
+# Run both Python scripts
 CMD ["bash", "-c", "python extract_frames.py && python run_colmap.py"]
