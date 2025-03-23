@@ -37,13 +37,10 @@ RUN apt-get update && apt-get install -y \
 # Install Python dependencies
 RUN pip install --no-cache-dir opencv-python tqdm
 
-# Clone COLMAP and disable METIS usage
-RUN git clone https://github.com/colmap/colmap.git /colmap && \
-    sed -i '/target_link_libraries(colmap PRIVATE metis)/d' /colmap/src/colmap/math/CMakeLists.txt && \
-    sed -i '/metis/d' /colmap/src/colmap/math/CMakeLists.txt
+# Clone COLMAP (do not disable METIS detection so that it links properly)
+RUN git clone https://github.com/colmap/colmap.git /colmap
 
 # Set working directory for build setup
-
 WORKDIR /colmap
 WORKDIR /colmap/build
 RUN rm -rf * && \
