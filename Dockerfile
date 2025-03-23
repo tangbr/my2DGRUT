@@ -48,9 +48,8 @@ RUN mkdir build
 WORKDIR /colmap/build
 RUN cmake .. \
     -DCUDA_ENABLED=OFF \
-    -DCMAKE_VERBOSE_MAKEFILE=ON \
-    -DCERES_INCLUDE_DIR=/usr/include/ceres \
-    -DCERES_LIBRARY=/usr/lib/x86_64-linux-gnu/libceres.a
+    -DCMAKE_VERBOSE_MAKEFILE=ON
+
 
 #|| (echo "==== CMakeOutput.log ====" && cat CMakeFiles/CMakeOutput.log || echo "No log found" && false)
     
