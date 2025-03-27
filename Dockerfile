@@ -51,6 +51,7 @@ RUN pip3 install --no-cache-dir --upgrade pip && \
     pip3 install --no-cache-dir opencv-python
 
 # Clone COLMAP and define an imported target for FreeImage using a HEREDOC
+# Clone COLMAP and inject a fixed FreeImage module
 RUN git clone https://github.com/colmap/colmap.git /colmap && \
     printf '%s\n' \
 'if(NOT TARGET freeimage::FreeImage)' \
@@ -59,15 +60,18 @@ RUN git clone https://github.com/colmap/colmap.git /colmap && \
 '      INTERFACE_INCLUDE_DIRECTORIES "/usr/include"' \
 '      INTERFACE_LINK_LIBRARIES "FreeImage")' \
 'endif()' \
-> /colmap/cmake/FreeImageImported.cmake
+EOF
+
 
 
 
 # Build and install COLMAP
 WORKDIR /colmap/build
-RUN rm -rf * && \
-    cmake .. -DCUDA_ENABLED=OFF -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_MODULE_PATH="/colmap/cmake" && \
-    make -j"$(nproc)" > /tmp/make_output.log 2>&1 || (cat /tmp/make_output.log && false) && \
+RUN cmake .. \
+    -DCUDA_ENABLED=OFF \
+    -DCMAKE_VERBOSE_MAKEFILE=ON \
+    -DCMAKE_MODULE_PATH="/colmap/overrides" && \
+    make -j"$(nproc)" && \
     make install
 
 # Copy your scripts into /app
