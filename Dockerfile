@@ -1,7 +1,11 @@
-FROM python:3.10-slim
+# Start with Ubuntu 18.04
+FROM ubuntu:18.04
 
-# Install system dependencies for COLMAP
-RUN apt-get update && apt-get install -y \
+# Avoid interactive prompts during package installs
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Update and install dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     cmake \
     build-essential \
@@ -29,31 +33,40 @@ RUN apt-get update && apt-get install -y \
     qtbase5-dev-tools \
     wget \
     ffmpeg \
+    python3 \
+    python3-pip \
     python3-opencv \
-    libmetis-dev && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    libmetis-dev \
+    meshlab \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-RUN pip install --no-cache-dir opencv-python tqdm
+RUN pip3 install --no-cache-dir opencv-python tqdm
 
-# Clone COLMAP (do not disable METIS detection so that it links properly)
+# Clone COLMAP (do not remove METIS lines so it can link properly)
 RUN git clone https://github.com/colmap/colmap.git /colmap
 
-# Set working directory for build setup
-WORKDIR /colmap
+# Build and install COLMAP
 WORKDIR /colmap/build
 RUN rm -rf * && \
-    rm -rf CMakeCache.txt CMakeFiles/ && \
-    cmake .. \
-        -DCUDA_ENABLED=OFF \
-        -DCMAKE_VERBOSE_MAKEFILE=ON && \
-    make -j$(nproc) > /tmp/make_output.log 2>&1 || (cat /tmp/make_output.log && false) && \
+    cmake .. -DCUDA_ENABLED=OFF -DCMAKE_VERBOSE_MAKEFILE=ON && \
+    make -j"$(nproc)" > /tmp/make_output.log 2>&1 || (cat /tmp/make_output.log && false) && \
     make install
 
-# Create working directory and copy scripts
+# Copy your scripts into /app
 WORKDIR /app
 COPY extract_frames.py run_colmap.py ./
 
-# Run both Python scripts
-CMD ["bash", "-c", "python extract_frames.py && python run_colmap.py"]
+# Make python point to python3 for consistent usage.
+RUN ln -s /usr/bin/python3 /usr/bin/python
+
+# Copy an entrypoint script that will handle runtime args
+COPY docker_entrypoint.sh /app/docker_entrypoint.sh
+RUN chmod +x /app/docker_entrypoint.sh
+
+# Use the entrypoint script by default
+ENTRYPOINT ["/app/docker_entrypoint.sh"]
+
+CMD ["/app/data/my_video.mp4", "default_user"]
+
