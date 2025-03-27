@@ -1,8 +1,8 @@
 import cv2
 import os
 
-video_path = "/workspace/video/my_video.mp4"
-output_dir = "/workspace/images"
+video_path = "/app/video/my_video.mp4"
+output_dir = "/app/images"
 os.makedirs(output_dir, exist_ok=True)
 
 frame_interval = 10  # every 10 frames
