@@ -52,13 +52,17 @@ RUN pip3 install --no-cache-dir --upgrade pip && \
 
 # Clone COLMAP 
 RUN git clone https://github.com/colmap/colmap.git /colmap && \
-    sed -i '/target_include_directories( *freeimage::FreeImage/d' /colmap/cmake/FindFreeImage.cmake && \
-    sed -i '/target_link_libraries( *freeimage::FreeImage/d' /colmap/cmake/FindFreeImage.cmake
+    echo "if(NOT TARGET freeimage::FreeImage)
+      add_library(freeimage::FreeImage INTERFACE IMPORTED)
+      set_target_properties(freeimage::FreeImage PROPERTIES
+          INTERFACE_INCLUDE_DIRECTORIES \"/usr/include\"
+          INTERFACE_LINK_LIBRARIES \"FreeImage\")
+    endif()" > /colmap/cmake/FreeImageImported.cmake
 
 # Build and install COLMAP
 WORKDIR /colmap/build
 RUN rm -rf * && \
-    cmake .. -DCUDA_ENABLED=OFF -DCMAKE_VERBOSE_MAKEFILE=ON && \
+    cmake .. -DCUDA_ENABLED=OFF -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_MODULE_PATH="/colmap/cmake" && \
     make -j"$(nproc)" > /tmp/make_output.log 2>&1 || (cat /tmp/make_output.log && false) && \
     make install
 
