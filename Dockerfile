@@ -8,6 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     cmake \
+    ninja-build \
     build-essential \
     libboost-all-dev \
     libceres-dev \
@@ -49,8 +50,6 @@ RUN pip3 install --no-cache-dir \
     setuptools \
     wheel \
     scikit-build \
-    ninja \
-    cmake \
     opencv-python \
     tqdm
 
