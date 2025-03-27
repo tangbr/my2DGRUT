@@ -50,11 +50,10 @@ RUN pip3 install --no-cache-dir --upgrade pip && \
     pip3 install --no-cache-dir setuptools wheel scikit-build tqdm && \
     pip3 install --no-cache-dir opencv-python
 
-# Clone COLMAP (do not remove METIS lines so it can link properly)
-# Clone COLMAP and patch FreeImage CMake configuration
+# Clone COLMAP 
 RUN git clone https://github.com/colmap/colmap.git /colmap && \
-    sed -i '/target_include_directories(FreeImage PUBLIC/d' /colmap/cmake/FindFreeImage.cmake && \
-    sed -i '/target_link_libraries(FreeImage PRIVATE/d' /colmap/cmake/FindFreeImage.cmake
+    sed -i '/target_include_directories( *freeimage::FreeImage/d' /colmap/cmake/FindFreeImage.cmake && \
+    sed -i '/target_link_libraries( *freeimage::FreeImage/d' /colmap/cmake/FindFreeImage.cmake
 
 # Build and install COLMAP
 WORKDIR /colmap/build
