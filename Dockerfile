@@ -54,13 +54,14 @@ RUN pip3 install --no-cache-dir --upgrade pip && \
 # Clone COLMAP and inject a fixed FreeImage module
 RUN git clone https://github.com/colmap/colmap.git /colmap && \
     rm /colmap/cmake/FindFreeImage.cmake && \
-    cat << 'EOF' > /colmap/cmake/FindFreeImage.cmake \
-if(NOT FREEIMAGE_FOUND) \
-  set(FREEIMAGE_FOUND TRUE) \
-  set(FREEIMAGE_INCLUDE_DIRS "/usr/include") \
-  set(FREEIMAGE_LIBRARIES "FreeImage") \
-endif() \
+    cat << 'EOF' > /colmap/cmake/FindFreeImage.cmake
+if(NOT FREEIMAGE_FOUND)
+  set(FREEIMAGE_FOUND TRUE)
+  set(FREEIMAGE_INCLUDE_DIRS "/usr/include")
+  set(FREEIMAGE_LIBRARIES "FreeImage")
+endif()
 EOF
+
 
 # RUN git clone https://github.com/colmap/colmap.git /colmap && \
 #     rm /colmap/cmake/FindFreeImage.cmake && \
