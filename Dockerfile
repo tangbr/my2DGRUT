@@ -50,14 +50,18 @@ RUN pip3 install --no-cache-dir --upgrade pip && \
     pip3 install --no-cache-dir setuptools wheel scikit-build tqdm && \
     pip3 install --no-cache-dir opencv-python
 
-# Clone COLMAP 
+# Clone COLMAP and define an imported target for FreeImage using a HEREDOC
 RUN git clone https://github.com/colmap/colmap.git /colmap && \
-    echo "if(NOT TARGET freeimage::FreeImage)
-      add_library(freeimage::FreeImage INTERFACE IMPORTED)
-      set_target_properties(freeimage::FreeImage PROPERTIES
-          INTERFACE_INCLUDE_DIRECTORIES \"/usr/include\"
-          INTERFACE_LINK_LIBRARIES \"FreeImage\")
-    endif()" > /colmap/cmake/FreeImageImported.cmake
+    printf '%s\n' \
+'if(NOT TARGET freeimage::FreeImage)' \
+'  add_library(freeimage::FreeImage INTERFACE IMPORTED)' \
+'  set_target_properties(freeimage::FreeImage PROPERTIES' \
+'      INTERFACE_INCLUDE_DIRECTORIES "/usr/include"' \
+'      INTERFACE_LINK_LIBRARIES "FreeImage")' \
+'endif()' \
+> /colmap/cmake/FreeImageImported.cmake
+
+
 
 # Build and install COLMAP
 WORKDIR /colmap/build
