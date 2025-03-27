@@ -53,6 +53,8 @@ RUN pip3 install --no-cache-dir --upgrade pip && \
 # Clone COLMAP (do not remove METIS lines so it can link properly)
 RUN git clone https://github.com/colmap/colmap.git /colmap
 
+RUN sed -i 's/freeimage::FreeImage/FreeImage/g' /colmap/cmake/FindDependencies.cmake
+
 # Build and install COLMAP
 WORKDIR /colmap/build
 RUN rm -rf * && \
