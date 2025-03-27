@@ -46,12 +46,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-RUN pip3 install --no-cache-dir \
-    setuptools \
-    wheel \
-    scikit-build \
-    opencv-python \
-    tqdm
+RUN pip3 install --no-cache-dir --upgrade pip && \
+    pip3 install --no-cache-dir setuptools wheel scikit-build tqdm && \
+    pip3 install --no-cache-dir opencv-python
 
 # Clone COLMAP (do not remove METIS lines so it can link properly)
 RUN git clone https://github.com/colmap/colmap.git /colmap
