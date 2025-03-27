@@ -53,26 +53,29 @@ RUN pip3 install --no-cache-dir --upgrade pip && \
 # Clone COLMAP and define an imported target for FreeImage using a HEREDOC
 # Clone COLMAP and inject a fixed FreeImage module
 RUN git clone https://github.com/colmap/colmap.git /colmap && \
-    printf '%s\n' \
+    rm /colmap/cmake/FindFreeImage.cmake && \
+    cat << 'EOF' > /colmap/cmake/FindFreeImage.cmake
 'if(NOT TARGET freeimage::FreeImage)' \
 '  add_library(freeimage::FreeImage INTERFACE IMPORTED)' \
+'  # Set the interface properties so that any target linking against freeimage::FreeImage' \
+'  # gets the correct include directories and links against the system FreeImage library.' \
 '  set_target_properties(freeimage::FreeImage PROPERTIES' \
 '      INTERFACE_INCLUDE_DIRECTORIES "/usr/include"' \
 '      INTERFACE_LINK_LIBRARIES "FreeImage")' \
-'endif()' \
+'endif()'
 EOF
+
 
 
 
 
 # Build and install COLMAP
 WORKDIR /colmap/build
-RUN cmake .. \
-    -DCUDA_ENABLED=OFF \
-    -DCMAKE_VERBOSE_MAKEFILE=ON \
-    -DCMAKE_MODULE_PATH="/colmap/overrides" && \
+RUN rm -rf * && \
+    cmake .. -DCUDA_ENABLED=OFF -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_MODULE_PATH="/colmap/cmake" && \
     make -j"$(nproc)" && \
     make install
+
 
 # Copy your scripts into /app
 WORKDIR /app
