@@ -51,9 +51,8 @@ RUN pip3 install --no-cache-dir --upgrade pip && \
     pip3 install --no-cache-dir opencv-python
 
 # Clone COLMAP (do not remove METIS lines so it can link properly)
-RUN git clone https://github.com/colmap/colmap.git /colmap
-
-RUN sed -i 's/freeimage::FreeImage/FreeImage/g' /colmap/cmake/FindDependencies.cmake
+RUN git clone https://github.com/colmap/colmap.git /colmap && \
+    sed -i 's/freeimage::FreeImage/FreeImage/g' /colmap/cmake/FindFreeImage.cmake
 
 # Build and install COLMAP
 WORKDIR /colmap/build
