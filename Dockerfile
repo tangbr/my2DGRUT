@@ -33,10 +33,12 @@ RUN git clone https://github.com/colmap/colmap.git /colmap && \
 "endif()" > /colmap/cmake/FindFreeImage.cmake
 
 # Build COLMAP without CUDA
+RUN rm -rf /colmap/build && mkdir /colmap/build
 WORKDIR /colmap/build
-RUN cmake .. -DCUDA_ENABLED=OFF -DCMAKE_VERBOSE_MAKEFILE=ON \
-    && make -j"$(nproc)" \
-    && make install
+RUN cmake .. -DCUDA_ENABLED=OFF -DCMAKE_VERBOSE_MAKEFILE=ON && \
+    make -j"$(nproc)" && \
+    make install
+
 
 # Clone 3DGRUT
 WORKDIR /app
