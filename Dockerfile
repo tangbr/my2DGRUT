@@ -1,31 +1,53 @@
-# Use Ubuntu 22.04 (Jammy) so we can install COLMAP from apt
+# Base image
 FROM ubuntu:22.04
 
-# Avoid interactive prompts
+# Avoid prompts during installs
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install system dependencies + COLMAP + Python
+# Update and install dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    colmap \
-    python3 \
-    python3-pip \
-    ffmpeg \
-    # (Optional) other tools you might need
+    git cmake ninja-build build-essential \
+    libboost-all-dev libceres-dev libsuitesparse-dev \
+    libfreeimage-dev libgoogle-glog-dev libgflags-dev \
+    libglew-dev libcgal-dev libatlas-base-dev libflann-dev \
+    libeigen3-dev libsqlite3-dev libpng-dev libjpeg-dev \
+    libx11-dev mesa-common-dev libglu1-mesa-dev libxrandr-dev \
+    qtbase5-dev qtdeclarative5-dev qttools5-dev qtbase5-dev-tools \
+    wget ffmpeg python3 python3-pip python3-opencv meshlab \
+    python3-setuptools python3-wheel python3-dev \
  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install Python packages for frame extraction scripts
-RUN pip3 install --no-cache-dir opencv-python tqdm
+# Upgrade pip and install Python deps
+RUN pip3 install --no-cache-dir --upgrade pip \
+    && pip3 install --no-cache-dir tqdm opencv-python scikit-build
 
-# Create a working directory
+# Clone and patch COLMAP
+RUN git clone https://github.com/colmap/colmap.git /colmap && \
+    rm /colmap/cmake/FindFreeImage.cmake && \
+    printf '%s\n' \
+"if(NOT TARGET freeimage::FreeImage)" \
+"  add_library(freeimage::FreeImage INTERFACE IMPORTED)" \
+"  set_target_properties(freeimage::FreeImage PROPERTIES" \
+"      INTERFACE_INCLUDE_DIRECTORIES \"/usr/include\"" \
+"      INTERFACE_LINK_LIBRARIES \"FreeImage\")" \
+"endif()" > /colmap/cmake/FindFreeImage.cmake
+
+# Build COLMAP without CUDA
+WORKDIR /colmap/build
+RUN cmake .. -DCUDA_ENABLED=OFF -DCMAKE_VERBOSE_MAKEFILE=ON \
+    && make -j"$(nproc)" \
+    && make install
+
+# Clone 3DGRUT
 WORKDIR /app
+RUN git clone https://github.com/nv-tlabs/3dgrut.git && \
+    cd 3dgrut && \
+    pip3 install -r requirements.txt
 
-# Copy your scripts
-COPY extract_frames.py run_colmap.py ./
+# Copy your processing scripts
+COPY extract_frames.py run_colmap.py docker_entrypoint.sh /app/
+RUN chmod +x /app/docker_entrypoint.sh
 
-# (Optional) If you want an entrypoint script
-# COPY docker_entrypoint.sh /app/docker_entrypoint.sh
-# RUN chmod +x /app/docker_entrypoint.sh
-# ENTRYPOINT ["/app/docker_entrypoint.sh"]
-
-# Default command (example: run your Python scripts)
-CMD ["bash"]
+# Default entrypoint
+ENTRYPOINT ["/app/docker_entrypoint.sh"]
+CMD ["/app/data/my_video.mp4", "default_user"]

@@ -17,23 +17,24 @@ __pycache__/
 build/
 .colmap/
 
-# Data, video, and output files (mounted at runtime)
+# Data, video, and output files (these are mounted at runtime)
 video/
 images/
 sparse/
 dense/
 output/
 
-# Large binary and database files
+# Large binary and intermediate files
 *.mp4
 *.jpg
+*.jpeg
 *.png
 *.ply
 *.db
 *.npz
 *.npy
 
-# System files
+# System and temp files
 .DS_Store
 Thumbs.db
 *.log

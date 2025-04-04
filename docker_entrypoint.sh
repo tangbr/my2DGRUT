@@ -1,26 +1,36 @@
 #!/bin/bash
 set -e
 
-# If you pass arguments like "my_video.mp4", it will be in "$1".
 VIDEO_PATH="$1"
 USERNAME="$2"
 
 if [[ -z "$VIDEO_PATH" || -z "$USERNAME" ]]; then
-    echo "Usage: docker run ... /path/to/video username"
+    echo "❌ Usage: docker run ... /path/to/video username"
     exit 1
 fi
 
+echo "🔹 User: $USERNAME"
+echo "🎞️  Extracting frames from video: $VIDEO_PATH"
 
-echo "🔹 Running extract_frames.py on: $VIDEO_PATH"
-python3 /app/extract_frames.py --video "$VIDEO_PATH" --out /app/images --step 10
+python3 /app/extract_frames.py \
+    --video "$VIDEO_PATH" \
+    --out /app/images \
+    --step 10
 
-echo "Running run_colmap.py"
-python3 /app/run_colmap.py --images /app/images --out /app/output
+echo "📸 Frames extracted to /app/images"
 
-echo "✅ Completed processing for user: $USERNAME"
-echo "🎯 PLY model located at: /app/output/model.ply"
-# Optional: If you want to open the .ply with MeshLab automatically:
-# meshlab /app/sparse/0/model.ply
-# or wherever your model file is located.
+echo "🧠 Running COLMAP reconstruction..."
+python3 /app/run_colmap.py \
+    --images /app/images \
+    --out /app/output
 
-# exec "$@"
+if [[ -f /app/output/model.ply ]]; then
+    echo "✅ Reconstruction completed for user: $USERNAME"
+    echo "🎯 Output PLY model: /app/output/model.ply"
+else
+    echo "❌ Reconstruction failed or model.ply not found"
+    exit 2
+fi
+
+# Optional visualization:
+# meshlab /app/output/model.ply
