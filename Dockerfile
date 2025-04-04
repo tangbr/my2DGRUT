@@ -22,6 +22,7 @@ RUN pip3 install --no-cache-dir --upgrade pip \
     && pip3 install --no-cache-dir tqdm opencv-python scikit-build
 
 # Clone and patch COLMAP
+# Clone and patch COLMAP
 RUN git clone https://github.com/colmap/colmap.git /colmap && \
     rm /colmap/cmake/FindFreeImage.cmake && \
     printf '%s\n' \
@@ -33,7 +34,7 @@ RUN git clone https://github.com/colmap/colmap.git /colmap && \
 "endif()" > /colmap/cmake/FindFreeImage.cmake
 
 # Build COLMAP without CUDA
-RUN rm -rf /colmap/build && mkdir /colmap/build
+WORKDIR /colmap/build
 RUN cmake .. \
     -DCUDA_ENABLED=OFF \
     -DCMAKE_VERBOSE_MAKEFILE=ON \
@@ -41,6 +42,7 @@ RUN cmake .. \
     -DMETIS_LIBRARY="/usr/lib/x86_64-linux-gnu/libmetis.so" && \
     make -j"$(nproc)" && \
     make install
+
 
 # Clone 3DGRUT
 WORKDIR /app
