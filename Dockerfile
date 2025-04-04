@@ -34,11 +34,13 @@ RUN git clone https://github.com/colmap/colmap.git /colmap && \
 
 # Build COLMAP without CUDA
 RUN rm -rf /colmap/build && mkdir /colmap/build
-WORKDIR /colmap/build
-RUN cmake .. -DCUDA_ENABLED=OFF -DCMAKE_VERBOSE_MAKEFILE=ON && \
+RUN cmake .. \
+    -DCUDA_ENABLED=OFF \
+    -DCMAKE_VERBOSE_MAKEFILE=ON \
+    -DMETIS_INCLUDE_DIR="/usr/include" \
+    -DMETIS_LIBRARY="/usr/lib/x86_64-linux-gnu/libmetis.so" && \
     make -j"$(nproc)" && \
     make install
-
 
 # Clone 3DGRUT
 WORKDIR /app
