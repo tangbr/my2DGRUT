@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libeigen3-dev libsqlite3-dev libpng-dev libjpeg-dev \
     libx11-dev mesa-common-dev libglu1-mesa-dev libxrandr-dev \
     qtbase5-dev qtdeclarative5-dev qttools5-dev qtbase5-dev-tools \
-    wget ffmpeg python3 python3-pip python3-opencv meshlab \
+    libqt5opengl5-dev wget ffmpeg python3 python3-pip python3-opencv meshlab \
     python3-setuptools python3-wheel python3-dev \
  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
